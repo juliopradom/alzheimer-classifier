@@ -1,0 +1,17 @@
+[11:34, 21/07/2020] Ignacio Rojas: Como algoritmos para aprendizaje inicial: realiza Wavelet para extraer coeficientes
+[11:35, 21/07/2020] Ignacio Rojas: Como salen muchos coeficientes --> aplicamos selección de caracteristicas. Algoritmo mRMR
+[11:35, 21/07/2020] Ignacio Rojas: Una vez que tengas ya todos los coeficientes de una imagen (para un slide), podemos hacer:
+[11:36, 21/07/2020] Ignacio Rojas: 1.- Clasificar directamente con un Slide y ver que sale (Podemos utilizar como algoritmo de clasificacion el SVM)
+[11:37, 21/07/2020] Ignacio Rojas: 2.- Podemos unir la información de varios Slides --> entoces incluso si la dimension es muy alta, hacemos una PCA a los 8-10 slides que tengamos (o mas) y despues aplicamos el SVM
+[11:37, 21/07/2020] Ignacio Rojas: Esto seria una primera prueba ya bastante completa. Si tenemos mas tiempo, entonces podemos hacer un segundo método, que consiste:
+[11:38, 21/07/2020] Ignacio Rojas: 1.- Se selecciona un slide y directamente se la pasa Deep Learning para clasificar (aqui no hay wavelet, ni mRMR, ni SVM) todo lo hace el DL
+[11:39, 21/07/2020] Ignacio Rojas: 2.- Al igual que antes, podemos hacer una unión de varios slides para hacer mejor la clasificacion, aun siendo en DL. Tendriamos que tener el mas votado
+[11:42, 21/07/2020] Ignacio Rojas: Te paso esta imagen para explicarlo
+[11:42, 21/07/2020] Ignacio Rojas: Por ultimo, las categorias:
+[11:42, 21/07/2020] Ignacio Rojas: AD: Persona con alzheimer
+[11:42, 21/07/2020] Ignacio Rojas: CN: Persona sana, Control
+[11:44, 21/07/2020] Ignacio Rojas: MCI: Deterioro cognitivo leve, es lo que se denomina Mild cognitive impairment (MCI) causes a slight but noticeable and measurable decline in cognitive abilities
+[11:44, 21/07/2020] Ignacio Rojas: Las otras tres que nos quedan:
+[11:44, 21/07/2020] Ignacio Rojas: 1.- EMCI: early mild cognitive impairment. 
+2.- LMCI: late mild cognitive impairment. 
+3.- SMC: Significant Memory Concern. ADNI 2 added a new cohort, the Significant Memory Concern (SMC).  Subjective memory concerns have been shown to be correlated with a higher likelihood of progression, thereby minimizing the stratification of risk among normal controls and addressing the gap between healthy elderly controls and MCI. The key inclusion criteria that distinguish the SMC cohort are a self-report significant memory concern from the participant, quantified by using the Cognitive Change Index and the Clinical Dementia Rating (CDR) of zero. SMC participants score within the normal range for cognition, and the informant does not equate the expressed concern with progressive memory impairment
