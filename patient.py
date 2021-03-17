@@ -26,30 +26,37 @@ class Patient:
             path_to_slice = f"{path_to_folder}/{group}/{image_file_name}"
             try:
                 image = cv2.imread(path_to_slice)
-            except:
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                image = np.float32(image)
+                image /= 255
+                images[str(slice_number)] = image 
+            except Exception as e:
                 raise Exception(f"Error: could not load slice={slice_number} \
-                                for patient={patient_number}")
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            image = np.float32(image)
-            image /= 255
-            images[str(slice_number)] = image     
+                                for patient={patient_number}, detail={e}") 
         self.images = images
         self.group = group.lower()
     
     def get_slice_wavelet_coefficients(self, wavelet_name, level, slice_number):
         
-        coefficients = pywt.wavedec2(data=self.images[str(slice_number)], wavelet=wavelet_name, \
-                                     level=level)
-        arr, coeff_slices, coeff_shapes = pywt.ravel_coeffs(coefficients)
+        #coefficients = pywt.wavedec2(data=self.images[str(slice_number)], wavelet=wavelet_name, \
+        #                             level=level)
+        #arr, coeff_slices, coeff_shapes = pywt.ravel_coeffs(coefficients)
         
-        return arr
+        # Gets only approx layer in the specified level
+        raw_coeffs = pywt.wavedec2(data=self.images[str(slice_number)], wavelet=wavelet_name, level=level)
+        target_coeffs = raw_coeffs[0]
+        coeffs = []
+        for i in range(len(target_coeffs)):
+            for j in range(len(target_coeffs[0])):
+                coeffs.append(target_coeffs[i][j])
+        
+        return coeffs
     
     def get_wavelet_coefficients(self, wavelet_name, level):
         
         coefficients_list = []
         for slice_number in self.images:
             coefficients_item = self.get_slice_wavelet_coefficients(wavelet_name, level, slice_number)
-            print(len(coefficients_item))
             coefficients_list = numpy.concatenate([coefficients_list, coefficients_item])
         return coefficients_list
     
