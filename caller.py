@@ -15,8 +15,10 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 
 parameters = {'kernel':('linear', 'rbf', 'sigmoid'), 'C': [1, 10, 100, 1000], 'gamma': [1e-1, 1e-2, 1e-3, 1e-4]}
-score1 = metrics.make_scorer(metrics.precision_score, average = None)
-score2 = metrics.make_scorer(metrics.recall_score, average = None)
+pca_parameters = {'kernel':('rbf', 'linear'), 'C': [1000], 'gamma': [1e-2]}
+
+score1 = metrics.make_scorer(metrics.precision_score, average = "weighted")
+score2 = metrics.make_scorer(metrics.recall_score, average = "weighted")
 scores = [score1,
           score2
           ]
@@ -231,21 +233,29 @@ print(selected_features)
 
 np.save("selected_features.npy", selected_features)
 """
+
+"""
 selected_features = np.load("selected_features.npy")
 print(selected_features)
 df_coefficients = df_coefficients[selected_features]
-
+"""
 """
 print("pca...")
 pca = PCA(n_components = 100, svd_solver = 'full')
 df_coefficients = pca.fit_transform(df_coefficients)
+np.save("selected_features_pca.npy",  df_coefficients)
+
 """
+df_coefficients = np.load("selected_features_pca.npy")
+
 
 X_train, X_test, Y_train, Y_test = train_test_split(df_coefficients, df_group, train_size=0.8,random_state=11, stratify=df_group)
 
+"""
+print("Getting scores...")
 for score in scores:
     svc = SVC()
-    clf = GridSearchCV(estimator=svc, param_grid=parameters, scoring=score)
+    clf = GridSearchCV(estimator=svc, param_grid=pca_parameters, scoring=score)
     clf.fit(X_train, Y_train.values.ravel())
     print("Best parameters set found on development set:")
     print()
@@ -268,13 +278,12 @@ for score in scores:
     y_true, y_pred = Y_test, clf.predict(X_test)
     print(classification_report(y_true, y_pred))
     print()
-    
-
 """
-#model = MLPClassifier(hidden_layer_sizes=(100,50,25),max_iter=2000)
+
+
+model = SVC(kernel='rbf')
 model.fit(X_train, Y_train.values.ravel())
 y_hat = [x for x in model.predict(X_test)]
-ascore = accuracy_score(Y_test, y_hat)
+print(classification_report(Y_test, y_hat))
 
-print(ascore)
-"""
+
