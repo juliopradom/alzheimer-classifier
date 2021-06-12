@@ -1,5 +1,12 @@
+# pdfs
 *.pdf
 
-images/
+#images
+alzheimer_classifier/images/
 
+#coefficients
+alzheimer_classifier/svm/coefficients
+alzheimer_classifier/svm/coefficients_selected
+
+# binaries
 *.npy

@@ -2,10 +2,7 @@ import cv2
 import pywt
 import numpy as np
 
-GROUPS = ["ad", "cn", "emci", "mci", "lmci", "smc"]
-SLICES = [55, 56, 61, 72, 82, 90, 104, 106, 114]
-PATH_TO_FOLDER = "./images"
-IMAGE_FORMAT = "{group}_wc1_{patient_number}_{slice_number}.jpg"
+from .constants import GROUPS, SLICES, PATH_TO_IMAGE_FOLDER, IMAGE_FORMAT
 
 class Patient:
     
@@ -13,7 +10,7 @@ class Patient:
         self, 
         patient_number, 
         group, 
-        path_to_folder=PATH_TO_FOLDER, 
+        path_to_folder=PATH_TO_IMAGE_FOLDER, 
         normalize_colour=True, 
         resize_image=False
     ):
