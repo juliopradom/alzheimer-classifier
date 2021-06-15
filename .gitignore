@@ -1,12 +1,19 @@
 # pdfs
 *.pdf
 
-#images
+# images
 alzheimer_classifier/images/
 
-#coefficients
+# coefficients
 alzheimer_classifier/svm/coefficients
 alzheimer_classifier/svm/coefficients_selected
 
+# raw arrays
+alzheimer_classifier/cnn/reshaped_images
+
 # binaries
 *.npy
+*.h5
+
+# python 
+_pycache_

@@ -1,5 +1,5 @@
-from patient import Patient
-from constants import PATH_TO_COEFFICIENTS_FOLDER
+from ..common.patient import Patient
+from ..common.constants import PATH_TO_COEFFICIENTS_FOLDER, INDEXES
 import numpy as np
 import pandas as pd
 import pickle
@@ -7,14 +7,6 @@ import typer
 
 WAVELET_NAME = "bior3.3"
 MAX_SAMPLES_NUMBER = 8000
-INDEXES = [
-    {"ad": {"first":1, "last": 1497}},
-    {"cn": {"first": 1501, "last": 3000}},
-    {"emci": {"first": 3001, "last": 3388}},
-    {"lmci": {"first": 70, "last": 1500}},
-    {"mci": {"first": 1501, "last": 3000}},
-    {"smc": {"first": 3001, "last": 3662}},
-    ]
 
 
 def save_coefficients(

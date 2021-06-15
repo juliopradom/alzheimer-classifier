@@ -121,3 +121,4 @@ class Patient:
                                 )
             coefficients_list = np.concatenate([coefficients_list, coefficients_item])
         return coefficients_list
+    

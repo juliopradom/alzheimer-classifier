@@ -1,11 +1,10 @@
 import pandas as pd
-import pickle
 import numpy as np
 import typer
 
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-from constants import PATH_TO_COEFFICIENTS_FOLDER, PATH_TO_SELECTED_COEFFICIENTS_FOLDER, GROUPS, SLICES
+from ..common.constants import PATH_TO_COEFFICIENTS_FOLDER, PATH_TO_SELECTED_COEFFICIENTS_FOLDER, GROUPS, SLICES
 from pymrmre import mrmr
 
 available_algorithms = ["pca", "mrmr"]
