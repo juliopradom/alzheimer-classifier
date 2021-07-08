@@ -84,12 +84,13 @@ class SVM:
         if not slice_number:
             slice_number = list(self.df_coefficients.keys())[0]
 
-        X_train, X_test, Y_train, Y_test = train_test_split(self.df_coefficients[str(slice_number)], 
-                                                            self.df_target[str(slice_number)], 
-                                                            train_size=train_size,
-                                                            random_state=self.random_state, 
-                                                            stratify=self.df_target[str(slice_number)]
-                                                            )
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            self.df_coefficients[str(slice_number)], 
+            self.df_target[str(slice_number)], 
+            train_size=train_size,
+            random_state=self.random_state, 
+            stratify=self.df_target[str(slice_number)]
+        )
         print("Getting scores...")
         svc = SVC()
         clf = GridSearchCV(estimator=svc, param_grid=self.parameters, scoring=self.score)
@@ -134,11 +135,13 @@ class SVM:
         if not slice_number:
             slice_number = list(self.df_coefficients.keys())[0]
         
-        X_train, X_test, Y_train, Y_test = train_test_split(self.df_coefficients[str(slice_number)],
-                                                            self.df_target[str(slice_number)], 
-                                                            train_size=train_size, 
-                                                            random_state=self.random_state, 
-                                                            stratify=self.df_target[str(slice_number)])
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            self.df_coefficients[str(slice_number)],
+            self.df_target[str(slice_number)], 
+            train_size=train_size, 
+            random_state=self.random_state, 
+            stratify=self.df_target[str(slice_number)]
+        )
         print("training model...")
         model = SVC(kernel=self.kernel, C=self.c, gamma=self.gamma)
         model.fit(X_train, Y_train.values.ravel())
@@ -161,16 +164,20 @@ class SVM:
 
         print("training models...")
         models = {}
-        Y_train, Y_test = train_test_split(self.df_target[list(self.df_target.keys())[0]], 
-                                           train_size=train_size, 
-                                           random_state=self.random_state, 
-                                           stratify=self.df_target[list(self.df_target.keys())[0]])
+        Y_train, Y_test = train_test_split(
+            self.df_target[list(self.df_target.keys())[0]], 
+            train_size=train_size, 
+            random_state=self.random_state, 
+            stratify=self.df_target[list(self.df_target.keys())[0]]
+        )
         y_hats = []
         for slice_number in self.df_coefficients.keys():
-            X_train, X_test = train_test_split(self.df_coefficients[str(slice_number)],         
-                                               train_size=train_size, 
-                                               random_state=self.random_state, 
-                                               stratify=self.df_target[str(slice_number)])
+            X_train, X_test = train_test_split(
+                self.df_coefficients[str(slice_number)],         
+                train_size=train_size, 
+                random_state=self.random_state, 
+                stratify=self.df_target[str(slice_number)]
+            )
             model = SVC(kernel=self.kernel, C=self.c, gamma=self.gamma)
             model.fit(X_train, Y_train.values.ravel())
             models[str(slice_number)] = model
