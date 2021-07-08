@@ -16,4 +16,4 @@ alzheimer_classifier/cnn/reshaped_images
 *.h5
 
 # python 
-_pycache_
+__pycache__
