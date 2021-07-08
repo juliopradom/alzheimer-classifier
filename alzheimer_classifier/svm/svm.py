@@ -140,7 +140,6 @@ class SVM:
                                                             random_state=self.random_state, 
                                                             stratify=self.df_target[str(slice_number)])
         print("training model...")
-        #model = SVC(kernel=self.kernel, c=self.c, gamma=self.gamma)
         model = SVC(kernel=self.kernel, C=self.c, gamma=self.gamma)
         model.fit(X_train, Y_train.values.ravel())
         y_hat = [x for x in model.predict(X_test)]
@@ -208,8 +207,3 @@ class SVM:
             y_hats = [x for x in self.models[str(slice_number)].predict(X_to_predict)]
             return y_hats
         
-        
-if __name__ == '__main__':
-    instance = SVM(path_to_folder="./alzheimer_classifier/svm/coefficients_selected", selection_algorithm="mrmr", slices=[114], wavelet_level=3, kernel="rbf", c=1000, gamma=0.01)
-    #instance.find_best_paremeters()
-    instance.train_multiexpert_model()

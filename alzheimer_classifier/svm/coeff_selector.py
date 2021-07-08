@@ -26,7 +26,11 @@ def mrmr_selector(df, df_target, max_coeffs_batch, total_features=100):
             
     """       
     def select_features(df, df_target, total_features):
-        result = mrmr.mrmr_ensemble(features=df, targets=df_target, solution_length=total_features)
+        result = mrmr.mrmr_ensemble(
+            features=df, 
+            targets=df_target, 
+            solution_length=total_features
+        )
         return result.iloc[0][0]
     
     features_list = df.columns
@@ -75,12 +79,27 @@ def pca_reductor(df, total_features=100):
     return df
 
 
-def transform_and_save_coefficients(
-        patient_slice: str="all", 
-        wavelet_level: int=4, 
-        algorithm: str="pca",
-        standarize: bool=True
-        ):
+def transform_and_select_coefficients(
+    patient_slice: str="all", 
+    wavelet_level: int=4, 
+    algorithm: str="pca",
+    standarize: bool=True,
+    save=True
+):
+    """ Apply feature selection and returns a DataFrame with the result
+        features
+        
+        Args:
+            patient_slice (str): slice to process
+            wavelet_level (int): level of the wavelet coefficients accessed
+            algorithm (str): algorithm to use
+            standarize (bool): True if data must be standardized
+            save (bool): True if resulting DataFrame must be saved
+        
+        Returns:
+            reducted df (DataFrame)
+            
+    """ 
     # Check if algorithm is available
     if algorithm not in available_algorithms:
         raise Exception(f"algorithm={algorithm} not valid")
@@ -95,7 +114,7 @@ def transform_and_save_coefficients(
             partial_coefficients = None
             for slice_number in SLICES:
                 file = f"{PATH_TO_COEFFICIENTS_FOLDER}/" \
-                              f"class_{group}_slice_{slice_number}_level_{wavelet_level}.npy"
+                       f"class_{group}_slice_{slice_number}_level_{wavelet_level}.npy"
                 coefficients = np.load(file, allow_pickle=True)
                 slice_partial_coefficients = [coeff[0] for coeff in coefficients]
                 if partial_coefficients is not None:
@@ -117,7 +136,7 @@ def transform_and_save_coefficients(
         print(f"loading coefficients for slice={patient_slice}...")
         for group in GROUPS:
             file = f"{PATH_TO_COEFFICIENTS_FOLDER}/" \
-                              f"class_{group}_slice_{patient_slice}_level_{wavelet_level}.npy"
+                   f"class_{group}_slice_{patient_slice}_level_{wavelet_level}.npy"
             coefficients = np.load(file, allow_pickle=True)
             partial_coefficients = [coeff[0] for coeff in coefficients]
             if all_coefficients is not None:
@@ -163,19 +182,27 @@ def transform_and_save_coefficients(
         print(df_coefficients)
         
     df_concat = pd.concat([df_coefficients, df_target], axis=1)
-    df_concat.to_csv(f"{PATH_TO_SELECTED_COEFFICIENTS_FOLDER}/selected_features_{algorithm}_slice_{patient_slice}_wavelet_{wavelet_level}.csv")
-    
+    if save:
+        df_concat.to_csv(
+            f"{PATH_TO_SELECTED_COEFFICIENTS_FOLDER}/" \
+            f"selected_features_{algorithm}_slice_{patient_slice}_wavelet_{wavelet_level}.csv"
+        )
+    return df_concat
 
 
-def main(patient_slice: str=typer.Argument(None), 
-         wavelet_level: int=typer.Argument(None),
-         algorithm: str=typer.Argument(None)
-         ):
+def main(
+    patient_slice: str=typer.Argument(None), 
+    wavelet_level: int=typer.Argument(None),
+    algorithm: str=typer.Argument(None),
+    save: bool=typer.Argument(True)
+):
     
-    transform_and_save_coefficients(patient_slice, 
-                      wavelet_level, 
-                      algorithm,
-                      )
+    transform_and_select_coefficients(
+        patient_slice, 
+        wavelet_level, 
+        algorithm,
+        save
+    )
     
 if __name__ == "__main__":
     typer.run(main)

@@ -12,7 +12,8 @@ class Patient:
         group, 
         path_to_folder=PATH_TO_IMAGE_FOLDER, 
         normalize_colour=True, 
-        resize_image=False
+        resize_image=False,
+        resize_shape=(224, 224, 3)
     ):
         """ Constructor: initialize an instance of the class.
         
@@ -37,7 +38,7 @@ class Patient:
             try:
                 image = cv2.imread(path_to_slice)
                 if resize_image:
-                    image.resize((224,224,3)) 
+                    image.resize(resize_shape) 
                 if normalize_colour:
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
                 image = np.float32(image)

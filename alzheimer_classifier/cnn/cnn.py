@@ -38,14 +38,12 @@ class CNN:
         image_arrays = {}
         image_targets = {}
         for slice_number in slices:
-            path_to_arrays_file = f"{path_to_raw_folder}/slice_{slice_number}.npy"
+            path_to_arrays_file = f"{path_to_raw_folder}/slice_{slice_number.split('_')[0]}.npy"
             # Drop residual columns
             arrays = np.load(path_to_arrays_file, allow_pickle=True)
             hey = np.array([array[0] for array in arrays])
             print(hey.shape)
             image_arrays[str(slice_number)] = np.array([array[0] for array in arrays])
-            hey = np.array([SLICES[GROUPS.index(array[1])] for array in arrays])
-            print(hey.shape)
             image_targets[str(slice_number)] = np.array([GROUPS.index(array[1]) for array in arrays])
             
         
@@ -68,7 +66,7 @@ class CNN:
         models_dict = {}
         if model_list:
             for model_slice in model_list:
-                models_dict[str(model_slice)] = models.load_model(f"{self.path_to_cnn_folder}/{slice_number}.h5")
+                models_dict[str(model_slice)] = models.load_model(f"{self.path_to_cnn_folder}/{model_slice}.h5")
         
         self.models_dict = models_dict
         self.random_state = random_state
@@ -103,11 +101,13 @@ class CNN:
               loss='sparse_categorical_crossentropy',
               metrics=["accuracy"])
         
-        X_train, X_test, Y_train, Y_test = train_test_split(self.image_arrays[str(slice_number)],
-                                                            self.image_targets[str(slice_number)], 
-                                                            train_size=train_size, 
-                                                            random_state=self.random_state, 
-                                                            stratify=self.image_targets[str(slice_number)])
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            self.image_arrays[str(slice_number)],
+            self.image_targets[str(slice_number)], 
+            train_size=train_size, 
+            random_state=self.random_state, 
+            stratify=self.image_targets[str(slice_number)]
+        )
         print("Training model...")
         print(Y_train)
         cnn.fit(X_train, Y_train, epochs=10)
@@ -166,11 +166,13 @@ class CNN:
               loss='sparse_categorical_crossentropy',
               metrics=["accuracy"])
         
-        X_train, X_test, Y_train, Y_test = train_test_split(self.image_arrays[str(slice_number)],
-                                                            self.image_targets[str(slice_number)], 
-                                                            train_size=train_size, 
-                                                            random_state=self.random_state, 
-                                                            stratify=self.image_targets[str(slice_number)])
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            self.image_arrays[str(slice_number)],
+            self.image_targets[str(slice_number)], 
+            train_size=train_size, 
+            random_state=self.random_state, 
+            stratify=self.image_targets[str(slice_number)]
+        )
         print("Training model...")
         print(Y_train)
         cnn.fit(X_train, Y_train, epochs=10)
@@ -188,7 +190,7 @@ class CNN:
         print()
         
         print("Saving model...")
-        cnn.save(f"{self.path_to_cnn_folder}/{slice_number}_tlf.h5")
+        cnn.save(f"{self.path_to_cnn_folder}/{slice_number}_tl.h5")
         self.models_dict[str(slice_number)] = cnn
         
 
@@ -206,30 +208,65 @@ class CNN:
                
         """
         if not X_to_predict:
-            X_to_predict  = train_test_split(self.image_arrays[str(slice_number)],
-                                             train_size=0.75, 
-                                             random_state=self.random_state, 
-                                             stratify=self.image_targets[str(slice_number)])[1]
+            X_to_predict = train_test_split(
+                self.image_arrays[str(slice_number)],
+                train_size=0.75, 
+                random_state=self.random_state, 
+                stratify=self.image_targets[str(slice_number)]
+            )[1]
      
-
         y_hat_final = []
         if slice_number == "all":
             y_hats = []
             for model in self.models.keys():
-                y_hats.append([x for x in self.models_dict[str(model)].predict(X_to_predict)])
+                y_hats_array = [x for x in self.models_dict[str(model)].predict(X_to_predict)]
+                y_hats_argm = [np.argmax(element) for element in y_hats_array]
+                y_hats.append(y_hats_argm)
             
             y_hat_final = []
             for i in range(0, len(y_hats[0])):
                 y_hat_final.append(mode([item[i] for item in y_hats]))
         else:
             y_hats = [x for x in self.models_dict[str(slice_number)].predict(X_to_predict)]
-            y_hat_final = y_hats
+            y_hat_final = [np.argmax(element) for element in y_hats]
         
         if save:
             array_object = np.array(y_hat_final)
             np.save(f"./alzheimer_classifier/cnn/slice_{slice_number}_prediction.npy", array_object)
-            
-if __name__ == '__main__':
-    instance = CNN(slices=[56])
-    #instance.find_best_paremeters()
-    instance.train_model_tl(slice_number=56)
+        
+        return y_hat_final
+    
+    def get_scores_model(self, train_size=0.75, slice_number=None):
+        """Builds and trains the model using a specific slice in the class
+           and VGG16 model
+        
+           Args:
+               train_size (float): 0-1 percentage of sample to use to 
+                                   train the model
+               slice_number (str): slice number to use to build the model
+        """
+        
+        if not slice_number:
+            slice_number = list(self.image_arrays.keys())[0]
+        
+        
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            self.image_arrays[str(slice_number)],
+            self.image_targets[str(slice_number)], 
+            train_size=train_size, 
+            random_state=self.random_state, 
+            stratify=self.image_targets[str(slice_number)]
+        )
+        print("Training model...")
+        y_hats = [x for x in self.models_dict[str(slice_number)].predict(X_test)]
+        y_hats = [np.argmax(element) for element in y_hats]
+        y_hat_final = y_hats
+        
+        print()
+        print("Detailed classification report:")
+        print()
+        print("The model is trained on the full development set.")
+        print("The scores are computed on the full evaluation set.")
+        print()
+        print(classification_report(Y_test, y_hat_final, digits=4))
+        print()
