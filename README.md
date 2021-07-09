@@ -7,9 +7,15 @@ that contains all the logic needed to process biomedical images and train and us
 The full project and research can be found here.
 
 ## How to install
+1. Using pip:
+```
+pip install requirements.txt
+```
 
-You can simply use `pip install requirements.txt`to install the modules required.
-
+2. Using poetry:
+```
+poetry install
+```
 ## How to use
 
 In order to use the code properly it is necessary to get a set of biomedical images to process. For the investigation
