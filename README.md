@@ -4,7 +4,7 @@ that contains all the logic needed to process biomedical images and train and us
 
 ## Full Project
 
-The full project and research can be found here.
+The full project and research can be found [here](https://github.com/juliopradom/alzheimer-classifier/blob/master/TFG_Julio_Prado.pdf).
 
 ## How to install
 1. Using pip:
