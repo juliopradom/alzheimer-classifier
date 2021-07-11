@@ -1,4 +1,7 @@
 # alzheimer-classifier
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 This repo holds the code for the TFG of Julio Prado 2020-2021. In particular, `alzheimer-classifier` is a module
 that contains all the logic needed to process biomedical images and train and use custom SVM and CNN models.
 
