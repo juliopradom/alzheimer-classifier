@@ -72,7 +72,7 @@ class CNN:
         self.random_state = random_state
     
 
-    def train_model(self, train_size=0.75, slice_number=None):
+    def train_model(self, train_size=0.75, slice_number=None, epochs=10, cnn=None):
         """Builds and trains the model using a specific slice in the class
         
            Args:
@@ -84,19 +84,19 @@ class CNN:
         if not slice_number:
             slice_number = list(self.image_arrays.keys())[0]
         
-        cnn = models.Sequential([
-            layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=self.input_shape),
-            layers.MaxPooling2D((2, 2)),
-            
-            layers.Conv2D(filters=64, kernel_size=(3, 3), activation='relu'),
-            layers.MaxPooling2D((2, 2)),
-            
-            layers.Flatten(),
-            layers.Dense(64, activation='relu'),
-            layers.Dense(self.class_number, activation='softmax')
-        ])
-        
-            
+        if cnn=None:
+            cnn = models.Sequential([
+                layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=self.input_shape),
+                layers.MaxPooling2D((2, 2)),
+
+                layers.Conv2D(filters=64, kernel_size=(3, 3), activation='relu'),
+                layers.MaxPooling2D((2, 2)),
+
+                layers.Flatten(),
+                layers.Dense(64, activation='relu'),
+                layers.Dense(self.class_number, activation='softmax')
+            ])
+              
         cnn.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=["accuracy"])
@@ -110,7 +110,7 @@ class CNN:
         )
         print("Training model...")
         print(Y_train)
-        cnn.fit(X_train, Y_train, epochs=10)
+        cnn.fit(X_train, Y_train, epochs=epochs)
         cnn.evaluate(X_test, Y_test)
         y_pred = cnn.predict(X_test)
         y_pred_classes = [np.argmax(element) for element in y_pred]
