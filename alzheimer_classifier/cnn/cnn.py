@@ -121,7 +121,8 @@ class CNN:
         print("The model is trained on the full development set.")
         print("The scores are computed on the full evaluation set.")
         print()
-        print(classification_report(Y_test, y_pred_classes, digits=4))
+        with open(f"slice_number_{slice_number}_epochs_{epochs}.txt", "w") as text_file:
+            print(classification_report(Y_test, y_pred_classes, digits=4), file=text_file)
         print()
         
         print("Saving model...")
